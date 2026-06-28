@@ -1,0 +1,31 @@
+name: Publish to Chrome Web Store
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Write firebase-config.js from secret
+        run: echo "${{ secrets.FIREBASE_CONFIG_JS }}" | base64 -d > firebase-config.js
+
+      - name: Zip extension
+        run: |
+          zip -r extension.zip manifest.json popup.html popup.css popup.js firebase-config.js icons _locales
+
+      - name: Upload & publish to Chrome Web Store
+        uses: mnao305/chrome-extension-upload@v5.0.0
+        with:
+          file-path: extension.zip
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          publish: true

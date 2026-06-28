@@ -1,0 +1,5 @@
+firebase-config.js
+*.zip
+.DS_Store
+__pycache__/
+*.pyc
