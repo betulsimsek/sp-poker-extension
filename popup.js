@@ -20,6 +20,7 @@ async function dbPush(path, data) {
   const res = await fetch(`${DB_URL}/${path}.json`, {
     method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(data),
   });
+  if (!res.ok) throw new Error(`dbPush failed: ${res.status} ${res.statusText}`);
   const result = await res.json();
   return result.name;
 }
@@ -271,15 +272,25 @@ document.getElementById("btn-create-room").addEventListener("click", async () =>
   const name = document.getElementById("input-name").value.trim();
   if (!name) return showError("home-error", chrome.i18n.getMessage("errorEnterName"));
 
-  const code = generateRoomCode();
-  await dbSet(`rooms/${code}`, {
-    code, createdAt: Date.now(), status: "idle", activeTask: null, participants: {},
-  });
-  const encName = await encryptField(code, name);
-  const newKey = await dbPush(`rooms/${code}/participants`, { name: encName, joinedAt: Date.now(), isHost: true });
-  S.role = "creator"; S.roomCode = code; S.myName = name; S.myId = newKey;
-  saveSession();
-  enterCreatorScreen();
+  const btn = document.getElementById("btn-create-room");
+  btn.disabled = true;
+  try {
+    const code = generateRoomCode();
+    await dbSet(`rooms/${code}`, {
+      code, createdAt: Date.now(), status: "idle", activeTask: null, participants: {},
+    });
+    const encName = await encryptField(code, name);
+    const newKey = await dbPush(`rooms/${code}/participants`, { name: encName, joinedAt: Date.now(), isHost: true });
+    if (!newKey) throw new Error("dbPush returned no key");
+    S.role = "creator"; S.roomCode = code; S.myName = name; S.myId = newKey;
+    saveSession();
+    enterCreatorScreen();
+  } catch (err) {
+    console.error("Create room failed:", err);
+    showError("home-error", chrome.i18n.getMessage("errorRoomNotFound"));
+  } finally {
+    btn.disabled = false;
+  }
 });
 
 document.getElementById("btn-join-room").addEventListener("click", async () => {
@@ -287,13 +298,24 @@ document.getElementById("btn-join-room").addEventListener("click", async () => {
   const name = document.getElementById("input-name").value.trim();
   if (!code || code.length !== 6) return showError("home-error", chrome.i18n.getMessage("errorEnterRoomCode"));
   if (!name) return showError("home-error", chrome.i18n.getMessage("errorEnterName"));
-  const room = await dbGet(`rooms/${code}`);
-  if (!room) return showError("home-error", chrome.i18n.getMessage("errorRoomNotFound"));
-  const encName = await encryptField(code, name);
-  const newKey = await dbPush(`rooms/${code}/participants`, { name: encName, joinedAt: Date.now(), voted: false });
-  S.role = "participant"; S.roomCode = code; S.myName = name; S.myId = newKey;
-  saveSession();
-  enterParticipantScreen();
+
+  const btn = document.getElementById("btn-join-room");
+  btn.disabled = true;
+  try {
+    const room = await dbGet(`rooms/${code}`);
+    if (!room) return showError("home-error", chrome.i18n.getMessage("errorRoomNotFound"));
+    const encName = await encryptField(code, name);
+    const newKey = await dbPush(`rooms/${code}/participants`, { name: encName, joinedAt: Date.now(), voted: false });
+    if (!newKey) throw new Error("dbPush returned no key");
+    S.role = "participant"; S.roomCode = code; S.myName = name; S.myId = newKey;
+    saveSession();
+    enterParticipantScreen();
+  } catch (err) {
+    console.error("Join room failed:", err);
+    showError("home-error", chrome.i18n.getMessage("errorRoomNotFound"));
+  } finally {
+    btn.disabled = false;
+  }
 });
 
 // ── Creator Screen ────────────────────────────────────────────────────────────
