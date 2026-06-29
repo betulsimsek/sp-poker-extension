@@ -61,6 +61,7 @@
   "errorEnterName": { "message": "Enter your name." },
   "errorEnterRoomCode": { "message": "Enter a 6-character room code." },
   "errorRoomNotFound": { "message": "Room not found." },
+  "errorGeneric": { "message": "Something went wrong. Please try again." },
   "errorPickSp": { "message": "Pick an SP value first." },
   "errorNoActiveTask": { "message": "No active task." },
   "confirmCloseRoom": { "message": "Close room? All participants will be disconnected." },

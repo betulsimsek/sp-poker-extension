@@ -61,6 +61,7 @@
   "errorEnterName": { "message": "Adını gir." },
   "errorEnterRoomCode": { "message": "6 karakterli oda kodu gir." },
   "errorRoomNotFound": { "message": "Oda bulunamadı." },
+  "errorGeneric": { "message": "Bir şeyler ters gitti. Lütfen tekrar deneyin." },
   "errorPickSp": { "message": "Önce bir SP değeri seç." },
   "errorNoActiveTask": { "message": "Aktif task yok." },
   "confirmCloseRoom": { "message": "Odayı kapat? Tüm katılımcıların bağlantısı kesilecek." },

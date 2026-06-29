@@ -287,7 +287,7 @@ document.getElementById("btn-create-room").addEventListener("click", async () =>
     enterCreatorScreen();
   } catch (err) {
     console.error("Create room failed:", err);
-    showError("home-error", chrome.i18n.getMessage("errorRoomNotFound"));
+    showError("home-error", `${chrome.i18n.getMessage("errorGeneric")} (${err.message})`);
   } finally {
     btn.disabled = false;
   }
@@ -312,7 +312,7 @@ document.getElementById("btn-join-room").addEventListener("click", async () => {
     enterParticipantScreen();
   } catch (err) {
     console.error("Join room failed:", err);
-    showError("home-error", chrome.i18n.getMessage("errorRoomNotFound"));
+    showError("home-error", `${chrome.i18n.getMessage("errorGeneric")} (${err.message})`);
   } finally {
     btn.disabled = false;
   }
