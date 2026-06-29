@@ -18,7 +18,7 @@ jobs:
 
       - name: Zip extension
         run: |
-          zip -r extension.zip manifest.json popup.html popup.css popup.js firebase-config.js icons _locales
+          zip -r extension.zip manifest.json popup.html popup.css popup.js firebase-config.js crypto.js i18n.js icons _locales
 
       - name: Upload & publish to Chrome Web Store
         uses: mnao305/chrome-extension-upload@v5.0.0
