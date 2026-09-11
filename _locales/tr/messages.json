@@ -25,6 +25,7 @@
 
   "nextTaskHint": { "message": "🎫 Sıradaki task'ı gir" },
   "placeholderTaskId": { "message": "Task ID (ör. MB-1234)" },
+  "btnDetectTaskTitle": { "message": "Task ID'yi aktif sekmeden algıla" },
   "btnStart": { "message": "Başlat" },
   "placeholderTaskNote": { "message": "Not (isteğe bağlı) — açıklama, bağlam, link..." },
   "historyTitleCompleted": { "message": "Tamamlananlar" },

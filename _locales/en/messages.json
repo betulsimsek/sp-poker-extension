@@ -25,6 +25,7 @@
 
   "nextTaskHint": { "message": "🎫 Enter the next task" },
   "placeholderTaskId": { "message": "Task ID (e.g. MB-1234)" },
+  "btnDetectTaskTitle": { "message": "Detect task ID from the active tab" },
   "btnStart": { "message": "Start" },
   "placeholderTaskNote": { "message": "Note (optional) — description, context, link..." },
   "historyTitleCompleted": { "message": "Completed" },
