@@ -350,6 +350,8 @@ function enterCreatorScreen() {
     }
   };
 
+  document.getElementById("btn-detect-task").onclick = () => prefillTaskIdFromTab(true);
+
   document.getElementById("btn-start-voting").onclick = async () => {
     const taskId = document.getElementById("input-task-id").value.trim();
     if (!taskId) return;
@@ -486,6 +488,36 @@ function enterCreatorScreen() {
 function showCreatorState(s) {
   ["idle", "voting", "results"].forEach(n =>
     document.getElementById(`creator-state-${n}`).classList.toggle("hidden", n !== s));
+  if (s === "idle") prefillTaskIdFromTab();
+}
+
+const TASK_KEY_RE = /[A-Z][A-Z0-9]+-\d+/;
+
+function extractTaskId(url, title) {
+  try {
+    const u = new URL(url || "");
+    const fromPath = u.pathname.match(/\/browse\/([A-Z][A-Z0-9]+-\d+)/);
+    if (fromPath) return fromPath[1];
+    const selected = u.searchParams.get("selectedIssue");
+    if (selected && TASK_KEY_RE.test(selected)) return selected.match(TASK_KEY_RE)[0];
+  } catch (_) {}
+  const fromTitle = (title || "").match(/\[([A-Z][A-Z0-9]+-\d+)\]/);
+  if (fromTitle) return fromTitle[1];
+  return null;
+}
+
+async function detectTaskIdFromTab() {
+  if (!chrome.tabs) return null;
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab) return null;
+  return extractTaskId(tab.url, tab.title);
+}
+
+async function prefillTaskIdFromTab(force = false) {
+  const input = document.getElementById("input-task-id");
+  if (!force && input.value.trim()) return;
+  const taskId = await detectTaskIdFromTab();
+  if (taskId) input.value = taskId;
 }
 
 // ── Participant Screen ────────────────────────────────────────────────────────
